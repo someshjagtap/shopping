@@ -1,0 +1,75 @@
+/**
+ * Product entity
+ */
+entity Product {
+  name String required,
+  description String maxlength(500),
+  category String,
+  price BigDecimal required,
+  currency String required,
+  stockQuantity Integer required,
+  brand String,
+  status String required, // AVAILABLE, OUT_OF_STOCK, DISCONTINUED
+  createdAt Instant required,
+  updatedAt Instant
+}
+
+/**
+ * Cart entity
+ */
+entity Cart {
+  cartTotal BigDecimal required,
+  currency String required,
+  status String required, // ACTIVE, CHECKED_OUT, ABANDONED
+  createdAt Instant required,
+  updatedAt Instant
+}
+
+/**
+ * CartItem entity (to handle many-to-many between Cart and Product with quantity)
+ */
+entity CartItem {
+  quantity Integer required,
+  price BigDecimal required, // per unit price
+  totalPrice BigDecimal required
+}
+
+/**
+ * Relationships
+ */
+relationship OneToMany {
+  Cart{items} to CartItem{cart}
+}
+
+relationship ManyToOne {
+  CartItem{product(name)} to Product
+}
+
+/**
+ * User relationship (if you want to tie carts to users)
+ */
+entity User {
+  username String required,
+  email String required unique,
+  password String required,
+  createdAt Instant required
+}
+
+relationship OneToMany {
+  User{carts} to Cart{user}
+}
+
+
+  // Set pagination options
+paginate * with infinite-scroll
+paginate * with pagination
+
+// Use Data Transfert Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service * with serviceClass
+
+filter *
+// Set an angular suffix
+// angularSuffix * with tvg
